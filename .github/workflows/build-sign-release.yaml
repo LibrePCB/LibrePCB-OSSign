@@ -38,6 +38,12 @@ jobs:
     runs-on: windows-2025
     environment: OSSign
     steps:
+      - name: Info
+        run: |
+            echo "Running on: ${{ runner.os }} ( ${{ runner.name }} )"
+            echo "LibrePCB source ref: ${{ github.event.inputs.source_ref }}"
+            echo "Docker image digest: ${{ github.event.inputs.builder_digest }}"
+            echo "Build author: ${{ env.LIBREPCB_BUILD_AUTHOR }}"
       
       - uses: actions/checkout@v4
         with:
