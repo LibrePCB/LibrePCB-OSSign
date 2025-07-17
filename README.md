@@ -1,2 +1,10 @@
-# LibrePCB--LibrePCB
-[OSSign] A powerful, innovative and intuitive EDA suite for everyone!
+![OSSign Banner](https://github.com/OSSign/.github/raw/main/svg/badge-white-wide-links.svg)
+# OSSign Information
+## What's this?
+This is a repository used for creating signed binaries for the [LibrePCB](https://librepcb.org/) project.
+
+## Where are the signed binaries published?
+The signed drivers are published by the author on [LibrePCB/LibrePCB](https://github.com/LibrePCB/LibrePCB).
+
+You can find the latest workflow runs for the build and signing process in the [Actions tab](https://github.com/ossign/LibrePCB--LibrePCB/actions).
+
