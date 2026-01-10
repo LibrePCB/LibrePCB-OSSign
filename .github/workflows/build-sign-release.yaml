@@ -1,6 +1,6 @@
 name: CI
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       # Specify a source branch to pull the code from
@@ -8,13 +8,13 @@ on:
         description: 'The source branch or ref to build from'
         default: 'master'
         required: true
-    
-      # Docker image tag: windowsservercore-ltsc2025-qt6.6-64bit-2
+
+      # Docker image tag: windowsservercore-ltsc2025-qt6.10-64bit-1
       # Using digest for easier verification of the transparent build chain.
-      # https://github.com/LibrePCB/docker-librepcb-dev/actions/runs/16144496203/job/45559638212
+      # https://github.com/LibrePCB/docker-librepcb-dev/actions/runs/20745227440/job/59560845499
       builder_digest:
         description: 'The docker image digest to use for building LibrePCB'
-        default: 'sha256:d1ad2916b9cc865c22b6bba1471e8f784c89cb51c07e0f25dac9274db846572a'
+        default: 'sha256:f78cc56d8c863317e44d20ab5a14080e20c0f13af8cab20533d2a6437a2437c9'
         required: true
 
 env:
@@ -44,13 +44,13 @@ jobs:
             echo "LibrePCB source ref: ${{ github.event.inputs.source_ref }}"
             echo "Docker image digest: ${{ github.event.inputs.builder_digest }}"
             echo "Build author: ${{ env.LIBREPCB_BUILD_AUTHOR }}"
-      
+
       - uses: actions/checkout@v4
         with:
           submodules: recursive
           repository: 'LibrePCB/LibrePCB'
           ref: ${{ github.event.inputs.source_ref }}
-      
+
       - name: Start Docker Container
         run: >
           docker run -d -t --name ci -w C:/work
@@ -64,14 +64,14 @@ jobs:
           -e CARGO_INCREMENTAL="${{ env.CARGO_INCREMENTAL }}"
           -e LIBREPCB_BUILD_AUTHOR="${{ env.LIBREPCB_BUILD_AUTHOR }}"
           "ghcr.io/librepcb/docker-librepcb-dev@${{ github.event.inputs.builder_digest }}"
-      
+
       - name: Print Environment
         run: docker exec ci bash ./ci/print_environment.sh
-      
+
       - name: Install Dependencies
         run: docker exec ci bash ./ci/install_dependencies.sh
       # caching --->
-      
+
       - name: Cache .ccache
         uses: actions/cache@v4
         with:
@@ -98,10 +98,10 @@ jobs:
 
       - name: Build LibrePCB
         run: docker exec ci bash ./ci/build_librepcb.sh
-      
+
       - name: Build Archive
         run: >
-          docker exec 
+          docker exec
           -e AST_CERT="${{ secrets.AST_CERT }}"
           -e AST_IDENT="${{ secrets.AST_IDENT }}"
           -e AST_SECRET="${{ secrets.AST_SECRET }}"
@@ -110,7 +110,7 @@ jobs:
           -e AST_TIMESTAMP="${{ secrets.AST_TIMESTAMP }}"
           -e AST_VAULT="${{ secrets.AST_VAULT }}"
           ci bash ./ci/build_windows_archive.sh
-      
+
       - name: Build Installer
         run: >
           docker exec
@@ -122,13 +122,12 @@ jobs:
           -e AST_TIMESTAMP="${{ secrets.AST_TIMESTAMP }}"
           -e AST_VAULT="${{ secrets.AST_VAULT }}"
           ci bash ./ci/build_windows_installer.sh
-      
+
       - name: Tar Artifacts
         run: docker exec ci bash ./ci/tar_artifacts.sh
-    
+
       - name: Upload Signed Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.job }}
           path: artifacts/artifacts.tar
-      
