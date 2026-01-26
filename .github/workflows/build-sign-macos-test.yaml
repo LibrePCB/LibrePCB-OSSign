@@ -118,13 +118,23 @@ jobs:
 
       - name: Build Bundle
         run: ./ci/build_mac_bundle.sh
-    
+
       - name: Install App Store Connect API Key
         run: |
              mkdir -p private_keys/
              echo '${{ secrets.MACOS_NOTARY_JSON }}' > private_keys/macos_notary.json
              echo '${{ secrets.MACOS_SIGN_PEM }}' > private_keys/macos.pem
-     
+
+      - name: Sign App
+        uses: indygreg/apple-code-sign-action@v1
+        with:
+             input_path: build/install/LibrePCB.app
+             pem_file: private_keys/macos.pem
+             app_store_connect_api_key_json_file: private_keys/macos_notary.json
+
+      - name: Build DMG
+        run: ./ci/build_mac_dmg.sh
+
       - name: Sign and Notarize
         uses: indygreg/apple-code-sign-action@v1
         with:
@@ -133,7 +143,7 @@ jobs:
              staple: true
              pem_file: private_keys/macos.pem
              app_store_connect_api_key_json_file: private_keys/macos_notary.json
-             
+
       - name: Tar Artifacts
         run: ./ci/tar_artifacts.sh
 
