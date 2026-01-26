@@ -122,7 +122,7 @@ jobs:
       - name: Install App Store Connect API Key
         run: |
              mkdir -p private_keys/
-             echo '${{ secrets.MACOS_NOTARY_KEY }}' > private_keys/AuthKey_${{ secrets.MACOS_NOTARY_KEY_ID }}.p12
+             echo '${{ secrets.MACOS_NOTARY_JSON }}' > private_keys/macos_notary.json
              echo '${{ secrets.MACOS_SIGN_PEM }}' > private_keys/macos.pem
      
       - name: Sign and Notarize
@@ -132,9 +132,8 @@ jobs:
              notarize: true
              staple: true
              pem_file: private_keys/macos.pem
-             app_store_connect_api_issuer: ${{ secrets.MACOS_NOTARY_ISSUER_ID }}
-             app_store_connect_api_key: ${{ secrets.MACOS_NOTARY_KEY_ID }}
-
+             app_store_connect_api_key_json_file: private_keys/macos_notary.json
+             
       - name: Tar Artifacts
         run: ./ci/tar_artifacts.sh
 
