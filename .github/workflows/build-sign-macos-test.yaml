@@ -119,22 +119,22 @@ jobs:
       - name: Build Bundle
         run: ./ci/build_mac_bundle.sh
     
-      - name: Install App Store Connect API Key
-        run: |
-            mkdir -p private_keys/
-            echo '${{ secrets.MACOS_NOTARY_KEY }}' > private_keys/AuthKey_${{ secrets.MACOS_NOTARY_KEY_ID }}.p12
-            echo '${{ secrets.MACOS_SIGN_P12 }}' | base64 -d > private_keys/macos.p12
+    #   - name: Install App Store Connect API Key
+    #     run: |
+    #         mkdir -p private_keys/
+    #         echo '${{ secrets.MACOS_NOTARY_KEY }}' > private_keys/AuthKey_${{ secrets.MACOS_NOTARY_KEY_ID }}.p12
+    #         echo '${{ secrets.MACOS_SIGN_P12 }}' | base64 -d > private_keys/macos.p12
 
-      - name: Sign and Notarize
-        uses: indygreg/apple-code-sign-action@v1
-        with:
-            input_path: artifacts/nightly_builds/librepcb-nightly-mac-${{ env.ARCH }}.dmg
-            notarize: true
-            staple: true
-            p12_file: private_keys/macos.p12
-            p12_password: ${{ secrets.MACOS_SIGN_PASSWORD }}
-            app_store_connect_api_issuer: ${{ secrets.MACOS_NOTARY_ISSUER_ID }}
-            app_store_connect_api_key: ${{ secrets.MACOS_NOTARY_KEY_ID }}
+    #   - name: Sign and Notarize
+    #     uses: indygreg/apple-code-sign-action@v1
+    #     with:
+    #         input_path: artifacts/nightly_builds/librepcb-nightly-mac-${{ env.ARCH }}.dmg
+    #         notarize: true
+    #         staple: true
+    #         p12_file: private_keys/macos.p12
+    #         p12_password: ${{ secrets.MACOS_SIGN_PASSWORD }}
+    #         app_store_connect_api_issuer: ${{ secrets.MACOS_NOTARY_ISSUER_ID }}
+    #         app_store_connect_api_key: ${{ secrets.MACOS_NOTARY_KEY_ID }}
 
       - name: Tar Artifacts
         run: ./ci/tar_artifacts.sh
