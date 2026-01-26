@@ -123,7 +123,7 @@ jobs:
         run: |
              mkdir -p private_keys/
              echo '${{ secrets.MACOS_NOTARY_KEY }}' > private_keys/AuthKey_${{ secrets.MACOS_NOTARY_KEY_ID }}.p12
-             echo '${{ secrets.MACOS_SIGN_P12 }}' | base64 -d > private_keys/macos.pfx
+             echo '${{ secrets.MACOS_SIGN_PEM }}' > private_keys/macos.pem
      
       - name: Sign and Notarize
         uses: indygreg/apple-code-sign-action@v1
@@ -131,8 +131,7 @@ jobs:
              input_path: artifacts/nightly_builds/librepcb-nightly-mac-${{ env.ARCH }}.dmg
              notarize: true
              staple: true
-             p12_file: private_keys/macos.pfx
-             p12_password: ${{ secrets.MACOS_SIGN_PASSWORD }}
+             pem_file: private_keys/macos.pem
              app_store_connect_api_issuer: ${{ secrets.MACOS_NOTARY_ISSUER_ID }}
              app_store_connect_api_key: ${{ secrets.MACOS_NOTARY_KEY_ID }}
 
