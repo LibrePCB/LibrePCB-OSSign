@@ -135,8 +135,10 @@ jobs:
              pem_file: private_keys/macos.pem
              app_store_connect_api_key_json_file: private_keys/macos_notary.json
              sign_args: |
-                --code-signature-flags Contents/MacOS/librepcb-cli:runtime
-                --code-signature-flags Contents/MacOS/librepcb:runtime
+                --code-signature-flags
+                Contents/MacOS/librepcb-cli:runtime
+                --code-signature-flags
+                Contents/MacOS/librepcb:runtime
 
       - name: Build DMG
         run: ./ci/build_mac_dmg.sh
