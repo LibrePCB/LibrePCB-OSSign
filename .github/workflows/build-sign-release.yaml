@@ -153,6 +153,10 @@ jobs:
       OCC_ROOT: '/Users/runner/occ'
       MACOSX_DEPLOYMENT_TARGET: '11'  # Picked up by CMake and Rust
       CMAKE_PREFIX_PATH: '/Users/runner/qt/lib/cmake/Qt6:/Users/runner/occ/lib/cmake/opencascade'
+    
+      # Build application with hardened runtime as it is required for notarizing.
+      CMAKE_XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME: YES
+
     steps:
       - name: Info
         run: |
@@ -217,6 +221,36 @@ jobs:
 
       - name: Build Bundle
         run: ./ci/build_mac_bundle.sh
+
+      - name: Install App Store Connect API Key
+        run: |
+             mkdir -p private_keys/
+             echo '${{ secrets.MACOS_NOTARY_JSON }}' > private_keys/macos_notary.json
+             echo '${{ secrets.MACOS_SIGN_PEM }}' > private_keys/macos.pem
+
+      - name: Sign App
+        uses: indygreg/apple-code-sign-action@v1
+        with:
+             input_path: build/install/LibrePCB.app
+             pem_file: private_keys/macos.pem
+             app_store_connect_api_key_json_file: private_keys/macos_notary.json
+             sign_args: |
+                --code-signature-flags
+                Contents/MacOS/librepcb-cli:runtime
+                --code-signature-flags
+                Contents/MacOS/librepcb:runtime
+
+      - name: Build DMG
+        run: ./ci/build_mac_dmg.sh
+
+      - name: Sign and Notarize
+        uses: indygreg/apple-code-sign-action@v1
+        with:
+             input_path: artifacts/nightly_builds/librepcb-nightly-mac-${{ env.ARCH }}.dmg
+             notarize: true
+             staple: true
+             pem_file: private_keys/macos.pem
+             app_store_connect_api_key_json_file: private_keys/macos_notary.json
 
       - name: Tar Artifacts
         run: ./ci/tar_artifacts.sh
