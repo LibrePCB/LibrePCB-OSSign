@@ -20,7 +20,7 @@ on:
 env:
   # Specify build author as an environment variable because on Apple Silicon
   # build_librepcb.sh is run locally where we want to use a different author.
-  LIBREPCB_BUILD_AUTHOR: "LibrePCB CI"
+  LIBREPCB_BUILD_AUTHOR: "OSSign CI"
 
   # Configure ccache.
   CCACHE_MAXSIZE: 1G
