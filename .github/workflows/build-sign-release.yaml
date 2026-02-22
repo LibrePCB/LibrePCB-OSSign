@@ -288,7 +288,7 @@ jobs:
           name: ${{ github.event.inputs.release_name }}
           tag_name: ${{ github.run_id }}
           files: |
-            artifacts/
+            artifacts_pub/
           body: |
             # Signed Release ${{ github.event.inputs.release_name }}
             
